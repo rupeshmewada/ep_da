@@ -1,8 +1,14 @@
 Rails.application.routes.draw do
-  get 'doctors/index'
-  get 'doctors/show'
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  # Defines the root path route ("/")
-  # root "articles#index"
+  # get "patients/name/:name" ,to:"patients#search_name"
+  resources :appointments 
+
+  resources :doctors ,:patients do 
+    resources :appointments 
+    get "area/:specilization" ,to:"doctors#area" , on: :collection    
+    get "name/:name" ,to:"doctors#search_name" ,on: :collection 
+
+  end
+
+  resources :specializations
 end
