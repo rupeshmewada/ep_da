@@ -1,0 +1,14 @@
+<div class="m-5">
+  <%= form_tag(doctors_path, :method => "get") do %>
+    <%= text_field_tag :search, params[:search], placeholder: "Search Here", class: "p-1" %>
+    <%= submit_tag "Search", class: "btn btn-primary", style: "margin-top:-5px" %>
+  <% end %>
+</div>
+
+
+<%@doctors.each do |doc|%>
+<h1><%=doc.name%></h1>
+<h1><%=doc.specilization%></h1>
+<h1><%=doc.location%></h1>
+<%# location %>
+<%end%>

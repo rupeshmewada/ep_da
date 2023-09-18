@@ -40,6 +40,7 @@ class AppointmentsController < ApplicationController
     end
   end
 
+
   def edit
     @crud_update = Appointment.find(params[:id])
   end
