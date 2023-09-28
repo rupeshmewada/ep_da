@@ -1,4 +1,6 @@
 class DoctorsController < ApplicationController
+  # protect_from_forgery with: :null_session  
+  before_action :authenticate_admin!
   skip_before_action :verify_authenticity_token
 
   # def index
@@ -16,7 +18,7 @@ class DoctorsController < ApplicationController
 
   def index
     @doctors = Doctor.all.order("created_at DESC")
-    render json: @doctors
+    # render json: @doctors
   end
 
   def area
@@ -29,12 +31,11 @@ class DoctorsController < ApplicationController
     render json: @doctor
   end
 
-  def search
 
+  def search
     
     location = params[:location]
     specilization = params[:specilization]
-    
 
     if (location != nil && specilization != nil)
       @doctor = Doctor.where(specilization: specilization).where(location: location)
@@ -64,7 +65,12 @@ class DoctorsController < ApplicationController
 
   def show
     @doctor = Doctor.find(params[:id])
-    render json: @doctor
+      if @doctor.image.attached?
+        @im = url_for(@doctor.image)
+      render json: {"doctor":@doctor, "image":@im}
+      else 
+      render json: {"doctor":@doctor}
+      end
   end
 
   def image
@@ -79,12 +85,24 @@ class DoctorsController < ApplicationController
 
   def create
     @doctor = Doctor.new(doctor_params)
+
+    image = params[:image]
+    puts "1111111111111-====1====#{image}========="
+
+    if image.present?
+      puts "80-   222222222222222222========#{params}========="
+
+      @doctor.image.attach(image)
+      puts "80-========#{params}========="
+
+    end
     if @doctor.save
-      # render json: @doctor, status: :created
-      redirect_to @doctor
+      puts "0---------------555555--------------"
+      render json: @doctor, status: :created
+      # redirect_to @doctor
     else
-      # render json: @doctor.errors
-      render :new
+      render json: @doctor.errors
+      # render :new
     end
   end
 

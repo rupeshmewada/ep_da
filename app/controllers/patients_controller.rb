@@ -1,8 +1,13 @@
 class PatientsController < ApplicationController
+  # before_action :authenticate_admin!
   skip_before_action :verify_authenticity_token
 
   def index
     @patients = Patient.all
+  
+    name= @patients[0]
+    puts "------========---------#{@patients[0].name}==================="
+    puts "------========---------#{name}==================="
     render json: @patients
   end
 
@@ -12,44 +17,45 @@ class PatientsController < ApplicationController
   end
 
   def show
-    @doctor = Patient.find(params[:id])
-    render json: @doctor
+    @patient = Patient.find(params[:id])
+    render json: @patient
   end
 
   def new
-    @doctor = Patient.new
-    render json: @doctor
+    @patient = Patient.new
+    render json: @patient
   end
 
   def create
-    @doctor = Patient.new(doctor_params)
-    if @doctor.save
-      render json: @doctor, status: :created
+    # debugger
+    @patient = Patient.new(patient_params)
+    if @patient.save
+      render json: @patient, status: :created
     else
-      render json: @doctor.errors
+      render json: @patient.errors
     end
   end
 
   def edit
-    @crud_update = Patient.find(params[:id])
+    @patient_update = Patient.find(params[:id])
   end
 
   def update
-    @crud = Patient.find(params[:id])
-    @crud.update(doctor_params)
-    render json: @crud
+    @patient = Patient.find(params[:id])
+    @patient.update(patient_params)
+    render json: @patient
   end
 
   def destroy
-    @crud = Patient.find(params[:id])
-    @crud.destroy
-    render json: @crud
+    @patient = Patient.find(params[:id])
+    @patient.destroy
+    render json: {msg:"delete succr", show: @patient}
   end
 
   private
 
-  def doctor_params
-    params.require(:patient).permit(:name, :mo_no, :email, :address, :gender)
+  def patient_params
+    params.require(:patient).permit(:name, :mo_no, :email, :address, :gender, :date)
    
   end
 end

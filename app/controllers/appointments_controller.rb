@@ -19,7 +19,6 @@ class AppointmentsController < ApplicationController
 
     end
   end
-  
 
   def show
     @appointment = Appointment.find(params[:id])
@@ -30,6 +29,24 @@ class AppointmentsController < ApplicationController
     @appointment = Appointment.new
     render json: @appointment
   end
+
+  def pat_create
+    # debugger
+    @doctor = Doctor.find(params[:doctor_id])
+    @patient = Patient.create!(name: params[:name], mo_no: params[:mo_no], email: params[:email], address: params[:address], gender: params[:gender], date: params[:date])
+    
+    @appointment_params = {date: Date.today,time: Time.now , doctor_id: @doctor.id, patient_id: @patient.id }
+    # render json: {doc: @doctor, pat:@patient}
+    puts "-----------------------#{@appointment_params}======-="
+
+    @appointment = Appointment.new(@appointment_params)
+    if @appointment.save 
+      render json: @appointment 
+    else 
+      render json: @appointment.error 
+    end
+  end
+
 
   def create
     @appointment = Appointment.new(appointment_params)

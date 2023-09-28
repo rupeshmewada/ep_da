@@ -1,14 +1,24 @@
 <div class="m-5">
+
+
   <%= form_tag(doctors_path, :method => "get") do %>
     <%= text_field_tag :search, params[:search], placeholder: "Search Here", class: "p-1" %>
     <%= submit_tag "Search", class: "btn btn-primary", style: "margin-top:-5px" %>
   <% end %>
 </div>
 
+<% if admin_signed_in? %>
+    <h3>sign in as <%=  current_admin.email%> </h3>
+     <%=  admin_session%> </h3><br>
+<%end %>
+
+      <%= link_to 'sign out' , destroy_admin_session_path %>
+
 
 <%@doctors.each do |doc|%>
-<h1><%=doc.name%></h1>
-<h1><%=doc.specilization%></h1>
-<h1><%=doc.location%></h1>
-<%# location %>
+  <p><%=doc.name%></p>
+  <p><%=doc.specilization%></p>
+  <p><%=doc.location%></p>
+  <%# location %>
 <%end%>
+
