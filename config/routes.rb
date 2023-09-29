@@ -22,9 +22,14 @@ Rails.application.routes.draw do
     get "city_search/:location" ,to:"doctors#city_search" ,on: :collection 
     
   end
-  post '/auth/login', to: 'authentication#login'
+
+  post '/auth/login', to: 'authentications#login'
   get '/*a', to: 'application#not_found'
-  
+
+  # resources :users, param: :_username
+  # post '/auth/login', to: 'authentication#login'
+  # get '/*a', to: 'application#not_found'
+
   get "/doctors/:id/image", to: "doctors#image"
 
   resources :specializations

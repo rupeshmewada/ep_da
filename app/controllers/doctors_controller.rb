@@ -1,26 +1,19 @@
 class DoctorsController < ApplicationController
   # protect_from_forgery with: :null_session  
-  before_action :authenticate_admin!
+  # before_action :authenticate_admin!
+
+  # before_action :authorize_request, except: %i[create, index]
+  before_action :authorize_request, only: %i[show]
+
+  # before_action :find_doctor, except: %i[create index]
+
   skip_before_action :verify_authenticity_token
-
-  # def index
-  #   if params[:search]
-  #     @doctors = Doctor.search(params[:search]).order("created_at DESC")
-  #     puts "#{@doctors.name}"
-
-  #     # render json: @doctors
-  #   else
-  #     @doctors = Doctor.all.order("created_at DESC")
-  #     puts "#{@doctors.name}"
-  #     # render json: @doctors
-  #   end
-  # end
 
   def index
     @doctors = Doctor.all.order("created_at DESC")
-    # render json: @doctors
+    render json: @doctors
   end
-
+ 
   def area
     @doctor = Doctor.where(specilization: params[:specilization])
     render json: @doctor
@@ -84,20 +77,16 @@ class DoctorsController < ApplicationController
   end
 
   def create
+    # debugger
     @doctor = Doctor.new(doctor_params)
+   
+    # image = params[:image]
 
-    image = params[:image]
-    puts "1111111111111-====1====#{image}========="
+    # if image.present?
+    #   @doctor.image.attach(image)
+    # end
 
-    if image.present?
-      puts "80-   222222222222222222========#{params}========="
-
-      @doctor.image.attach(image)
-      puts "80-========#{params}========="
-
-    end
     if @doctor.save
-      puts "0---------------555555--------------"
       render json: @doctor, status: :created
       # redirect_to @doctor
     else
@@ -124,7 +113,14 @@ class DoctorsController < ApplicationController
 
   private
 
+  # def find_doctor
+  #   @user = Doctor.find_by_name!(params[:name])
+  #   rescue ActiveRecord::RecordNotFound
+  #     render json: { errors: 'User not found' }, status: :not_found
+  # end
+
+
   def doctor_params
-    params.require(:doctor).permit(:name, :email, :specilization, :mo_no, :location, :fees, :image)
+    params.require(:doctor).permit(:name, :email, :specilization, :mo_no, :location, :fees, :password, :image)
   end
 end
