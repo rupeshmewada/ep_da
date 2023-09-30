@@ -3,6 +3,7 @@ class PatientsController < ApplicationController
 
   # before_action :authorize_request, only: %i[show]
   # before_action :find_doctor, except: %i[create index]
+  # before_action :authorize_request, only: %i[index, show]
 
   skip_before_action :verify_authenticity_token
 

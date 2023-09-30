@@ -1,19 +1,19 @@
 class DoctorsController < ApplicationController
-  # protect_from_forgery with: :null_session  
+  # protect_from_forgery with: :null_session
   # before_action :authenticate_admin!
 
   # before_action :authorize_request, except: %i[create, index]
-  before_action :authorize_request, only: %i[show]
+  # before_action :authorize_request, only: %i[show]
 
   # before_action :find_doctor, except: %i[create index]
 
   skip_before_action :verify_authenticity_token
 
   def index
-    @doctors = Doctor.all.order("created_at DESC")
+    @doctors = Doctor.all.order('created_at DESC')
     render json: @doctors
   end
- 
+
   def area
     @doctor = Doctor.where(specilization: params[:specilization])
     render json: @doctor
@@ -24,21 +24,19 @@ class DoctorsController < ApplicationController
     render json: @doctor
   end
 
-
   def search
-    
     location = params[:location]
     specilization = params[:specilization]
 
-    if (location != nil && specilization != nil)
-      @doctor = Doctor.where(specilization: specilization).where(location: location)
-    elsif (location != nil)
-      @doctor = Doctor.where(location: location)
-    elsif (specilization != nil)
-      @doctor = Doctor.where(specilization: specilization)
-    else
-      @doctor = Doctor.all
-    end
+    @doctor = if !location.nil? && !specilization.nil?
+                Doctor.where(specilization: specilization).where(location: location)
+              elsif !location.nil?
+                Doctor.where(location: location)
+              elsif !specilization.nil?
+                Doctor.where(specilization: specilization)
+              else
+                Doctor.all
+              end
 
     render json: @doctor
   end
@@ -49,6 +47,30 @@ class DoctorsController < ApplicationController
   #   render json: @doctor
 
   # end
+  def doctor_all_appointmentent
+    # debugger
+    @ids = []
+    @doctor = Doctor.find(params[:id])
+    @appointments = @doctor.appointments.all
+
+    @appointments.each do |item|
+      # puts "-----#{item.patient_id}------"
+      @ids << item.patient_id
+    end
+    render json: @appointments
+
+    # @all_patient_data = Patient.find(@ids)
+    # @doctorsdetails = Doctor.joins(patients: :appointments).select("patients.id","patients.name","patients.mo_no","patients.address","patients.email","patients.gender", "appointments.date","appointments.time")
+    # @doctorsdetails = Doctor.joins(patients: :appointments).select("patients.id","patients.name","patients.mo_no","patients.address","patients.email","patients.gender", "appointments.date","appointments.time")
+    # @doctorsdetails = Doctor.joins(:patients)
+    # render json: @doctorsdetails
+  end
+
+  def doc_pat
+    @doctor = Doctor.find(params[:id])
+    @allpat = @doctor.patients.all
+    render json: @allpat
+  end
 
   def search_name
     @doctor = Doctor.where(name: params[:name])
@@ -58,17 +80,17 @@ class DoctorsController < ApplicationController
 
   def show
     @doctor = Doctor.find(params[:id])
-      if @doctor.image.attached?
-        @im = url_for(@doctor.image)
-      render json: {"doctor":@doctor, "image":@im}
-      else 
-      render json: {"doctor":@doctor}
-      end
+    if @doctor.image.attached?
+      @im = url_for(@doctor.image)
+      render json: { "doctor": @doctor, "image": @im }
+    else
+      render json: { "doctor": @doctor }
+    end
   end
 
   def image
     @image = Doctor.find(params[:id]).image
-    render json: @image.download, type: @image.content_type, disposition: "inline"
+    render json: @image.download, type: @image.content_type, disposition: 'inline'
   end
 
   def new
@@ -79,7 +101,7 @@ class DoctorsController < ApplicationController
   def create
     # debugger
     @doctor = Doctor.new(doctor_params)
-   
+
     # image = params[:image]
 
     # if image.present?
@@ -107,7 +129,7 @@ class DoctorsController < ApplicationController
 
   def destroy
     @crud = Doctor.find(params[:id])
-    @crud.destroy 
+    @crud.destroy
     render json: @crud
   end
 
@@ -118,7 +140,6 @@ class DoctorsController < ApplicationController
   #   rescue ActiveRecord::RecordNotFound
   #     render json: { errors: 'User not found' }, status: :not_found
   # end
-
 
   def doctor_params
     params.require(:doctor).permit(:name, :email, :specilization, :mo_no, :location, :fees, :password, :image)

@@ -11,7 +11,9 @@ Rails.application.routes.draw do
   
   resources :appointments 
   resources :tests 
-  
+  get "doctors/:id/doctor_all_appointmentent" ,to:"doctors#doctor_all_appointmentent"
+  get "doctors/:id/doc_pat" ,to:"doctors#doc_pat"
+
   get "/doctors/search", to: "doctors#search"
   resources :doctors ,:patients do 
     
